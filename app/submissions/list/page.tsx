@@ -37,15 +37,30 @@ export default function SubmissionsList() {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching submissions from /api/scoreboard...');
       const response = await axios.get('/api/scoreboard');
+      
+      console.log('API response received:', response.status);
+      console.log('Response data:', JSON.stringify(response.data));
+      
       if (response.data && response.data.users) {
+        console.log(`Found ${response.data.users.length} users in response`);
         setUsers(response.data.users);
       } else {
+        console.error('Unexpected response format:', response.data);
         setError('Unexpected response format');
       }
     } catch (err) {
-      setError('Failed to fetch submissions. Please try again.');
       console.error('Error fetching submissions:', err);
+      // More detailed error logging
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error details:', {
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data,
+        });
+      }
+      setError('Failed to fetch submissions. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -106,7 +121,7 @@ export default function SubmissionsList() {
                 My Dashboard
               </button>
               <button
-                onClick={() => router.push('/prompt-submission')}
+                onClick={() => router.push('/dashboard')}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
               >
                 Submit Prompt
@@ -167,7 +182,7 @@ export default function SubmissionsList() {
                     <h3 className="text-lg font-medium text-gray-800 mb-2">No submissions yet</h3>
                     <p className="text-gray-500 mb-4">Be the first to submit your prompt and join the leaderboard!</p>
                     <button
-                      onClick={() => router.push('/prompt-submission')}
+                      onClick={() => router.push('/submissions')}
                       className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
                     >
                       Submit a Prompt
