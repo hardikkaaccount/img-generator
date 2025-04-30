@@ -2,7 +2,7 @@ import axios from 'axios';
 import { generateMockImage } from './mockImageGeneration';
 
 // Maximum allowed prompt length
-const MAX_PROMPT_LENGTH = 500;
+const MAX_PROMPT_LENGTH = 1200;
 
 // Function to generate an image based on a text prompt using Hugging Face API
 export async function generateImage(prompt: string): Promise<string> {
@@ -24,9 +24,8 @@ export async function generateImage(prompt: string): Promise<string> {
 
     console.log(`Sending request to ${API_URL} with prompt: "${prompt}"`);
 
-    // Include proper formatting for the prompt
-    const formattedPrompt = JSON.stringify(prompt);
-
+    // Remove the JSON.stringify for the prompt as it may cause issues with longer prompts
+    // Just use the prompt string directly in the inputs field
     const response = await axios({
       url: API_URL,
       method: 'POST',
@@ -35,11 +34,14 @@ export async function generateImage(prompt: string): Promise<string> {
         'Content-Type': 'application/json',
       },
       data: {
-        inputs: formattedPrompt,
+        inputs: prompt,
+        options: {
+          wait_for_model: true  // Ensure the model completes generation before returning
+        }
       },
       responseType: 'arraybuffer',
-      validateStatus: (status) => true, // Don't throw on any status code
-      timeout: 30000, // 30 second timeout (increased from 15s)
+      validateStatus: (status: number) => true, // Don't throw on any status code
+      timeout: 60000, // 60 second timeout (increased from 30s for longer prompts)
     });
 
     // Check if we got an error response

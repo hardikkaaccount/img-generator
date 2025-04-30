@@ -4,7 +4,7 @@ import User from '@/app/models/User';
 import { generateImage } from '@/app/utils/imageGeneration';
 
 // Maximum allowed prompt length
-const MAX_PROMPT_LENGTH = 500;
+const MAX_PROMPT_LENGTH = 1200;
 
 export async function POST(req: NextRequest) {
   try {
