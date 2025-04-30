@@ -248,6 +248,7 @@ export default function Dashboard() {
                   userId={userId}
                   onSuccess={handleImageGenerated}
                   onRemainingPromptsUpdate={handleRemainingPromptsUpdate}
+                  disabled={!!generatedImage}
                 />
               </div>
               

@@ -26,11 +26,17 @@ export default function ImageActions({
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
 
   const initiateSubmit = () => {
     // Show the custom confirmation modal
     setShowConfirmModal(true);
+  };
+
+  const initiateDelete = () => {
+    // Show the delete confirmation modal
+    setShowDeleteModal(true);
   };
 
   const confirmSubmit = async () => {
@@ -73,10 +79,8 @@ export default function ImageActions({
   };
 
   const handleDelete = async () => {
-    // Confirm deletion
-    if (!confirm('Are you sure you want to delete this image? You will lose this prompt.')) {
-      return;
-    }
+    // Close the modal
+    setShowDeleteModal(false);
     
     setIsDeleting(true);
     setError('');
@@ -113,7 +117,7 @@ export default function ImageActions({
 
   return (
     <>
-      {/* Confirmation Modal */}
+      {/* Submission Confirmation Modal */}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
           <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-xl transform animate-slide-up">
@@ -149,6 +153,48 @@ export default function ImageActions({
                 className="btn btn-primary px-5"
               >
                 Yes, Submit Image
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-xl transform animate-slide-up">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 bg-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-700 dark:text-white">Delete This Image?</h3>
+            </div>
+            
+            <div className="mb-6 text-gray-600 dark:text-gray-300">
+              <p className="mb-3 text-center font-medium">
+                Are you sure you want to delete this image?
+              </p>
+              <div className="bg-danger/10 p-4 rounded-lg border border-danger/20 mb-4">
+                <p className="text-sm">
+                  If you delete this image, you can generate a new one with a different prompt. This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="btn btn-outline px-5"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="btn btn-danger bg-danger text-white hover:bg-danger/90 px-5"
+              >
+                Yes, Delete Image
               </button>
             </div>
           </div>
@@ -250,7 +296,7 @@ export default function ImageActions({
             </button>
             
             <button
-              onClick={handleDelete}
+              onClick={initiateDelete}
               className="btn btn-outline btn-lg border-danger text-danger hover:bg-danger/10"
               disabled={isSubmitting || isDeleting || !!success}
             >
