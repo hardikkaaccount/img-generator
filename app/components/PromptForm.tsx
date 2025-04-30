@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 // Maximum allowed prompt length
-const MAX_PROMPT_LENGTH = 500;
+const MAX_PROMPT_LENGTH = 1200;
 
 interface PromptFormProps {
   userId?: string;
