@@ -116,13 +116,13 @@ export default function SubmissionsList() {
             <div className="flex gap-4">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors"
+                className="px-4 py-2 bg-secondary text-white rounded-md"
               >
                 My Dashboard
               </button>
               <button
-                onClick={() => router.push('/dashboard')}
-                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                onClick={() => router.push('/prompt/submit')}
+                className="px-4 py-2 bg-primary text-white rounded-md"
               >
                 Submit Prompt
               </button>
@@ -152,7 +152,7 @@ export default function SubmissionsList() {
                 </div>
                 <button
                   onClick={fetchSubmissions}
-                  className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                  className="px-4 py-2 bg-primary text-white rounded-md"
                 >
                   Try Again
                 </button>
@@ -183,7 +183,7 @@ export default function SubmissionsList() {
                     <p className="text-gray-500 mb-4">Be the first to submit your prompt and join the leaderboard!</p>
                     <button
                       onClick={() => router.push('/submissions')}
-                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                      className="px-4 py-2 bg-primary text-white rounded-md"
                     >
                       Submit a Prompt
                     </button>
@@ -288,8 +288,8 @@ export default function SubmissionsList() {
             </button>
             {username && (
               <button
-                onClick={() => router.push('/submissions/my')}
-                className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors"
+                onClick={() => router.push('/submissions')}
+                className="px-4 py-2 bg-secondary text-white rounded-md"
               >
                 View My Submissions
               </button>
