@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Modern color palette */
+  --primary: 79, 70, 229;    /* Indigo-600 */
+  --primary-light: 129, 140, 248; /* Indigo-400 */
+  --primary-dark: 67, 56, 202;    /* Indigo-700 */
+  
+  --secondary: 16, 185, 129;  /* Emerald-500 */
+  --secondary-light: 52, 211, 153; /* Emerald-400 */
+  --secondary-dark: 5, 150, 105;   /* Emerald-600 */
+  
+  --danger: 239, 68, 68;      /* Red-500 */
+  --warning: 245, 158, 11;    /* Amber-500 */
+  --success: 34, 197, 94;     /* Green-500 */
+  
+  --background: 249, 250, 251; /* Gray-50 */
+  --card: 255, 255, 255;      /* White */
+  --text: 17, 24, 39;         /* Gray-900 */
+  --text-secondary: 107, 114, 128; /* Gray-500 */
+  --border: 229, 231, 235;    /* Gray-200 */
+}
+
+body {
+  color: rgb(var(--text));
+  background-color: rgb(var(--background));
+  background-image: linear-gradient(
+    to bottom,
+    rgba(var(--primary-light), 0.05),
+    rgba(var(--background), 1)
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer components {
+  /* Button Styles */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium text-center transition-all duration-200 shadow-sm;
+    @apply flex items-center justify-center gap-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 hover:translate-y-[-1px];
+  }
+  
+  .btn-primary {
+    background-color: rgb(var(--primary));
+    color: white;
+    @apply hover:bg-opacity-90 focus:ring-indigo-500;
+  }
+  
+  .btn-secondary {
+    background-color: rgb(var(--secondary));
+    color: white;
+    @apply hover:bg-opacity-90 focus:ring-emerald-500;
+  }
+  
+  .btn-danger {
+    background-color: rgb(var(--danger));
+    color: white;
+    @apply hover:bg-opacity-90 focus:ring-red-500;
+  }
+  
+  .btn-outline {
+    @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  /* Card Styles */
+  .card {
+    background-color: rgb(var(--card));
+    border: 1px solid rgb(var(--border));
+    @apply rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300;
+  }
+  
+  .card-header {
+    @apply p-6 border-b border-gray-100;
+  }
+  
+  .card-body {
+    @apply p-6;
+  }
+  
+  /* Form Elements */
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-300;
+    @apply bg-white text-gray-800 placeholder-gray-400;
+    @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+    @apply shadow-sm transition-all duration-200;
+  }
+  
+  textarea.input {
+    @apply resize-none;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-white bg-opacity-70 backdrop-filter backdrop-blur-lg border border-white border-opacity-20;
+  }
+  
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Ensure text inputs have proper styling */
+  input, textarea, input[type="text"], input[type="password"], textarea.input, .input {
+    color: rgb(var(--text)) !important;
+    background-color: white !important;
+    border: 1px solid rgb(var(--border)) !important;
+  }
+  
+  /* Headings in cards */
+  .card h1, .card h2, .card h3, .card h4, .card h5, .card h6,
+  .bg-white h1, .bg-white h2, .bg-white h3, .bg-white h4, .bg-white h5, .bg-white h6 {
+    color: rgb(var(--text)) !important;
+  }
+  
+  /* Status badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    background-color: rgba(var(--primary), 0.1);
+    color: rgb(var(--primary));
+  }
+  
+  .badge-success {
+    background-color: rgba(var(--success), 0.1);
+    color: rgb(var(--success));
+  }
+  
+  .badge-danger {
+    background-color: rgba(var(--danger), 0.1);
+    color: rgb(var(--danger));
+  }
+  
+  .badge-warning {
+    background-color: rgba(var(--warning), 0.1);
+    color: rgb(var(--warning));
+  }
+}
