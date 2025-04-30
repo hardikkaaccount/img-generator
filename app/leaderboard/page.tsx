@@ -50,7 +50,7 @@ export default function Leaderboard() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-background">
-        <Navbar username={username} />
+        <Navbar username={username || undefined} />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
@@ -61,7 +61,7 @@ export default function Leaderboard() {
   if (error) {
     return (
       <main className="min-h-screen bg-background">
-        <Navbar username={username} />
+        <Navbar username={username || undefined} />
         <div className="container mx-auto px-4 py-16">
           <div className="card p-8 max-w-md mx-auto">
             <div className="text-center">
@@ -85,7 +85,7 @@ export default function Leaderboard() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar username={username} />
+      <Navbar username={username || undefined} />
       
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <header className="mb-8">
