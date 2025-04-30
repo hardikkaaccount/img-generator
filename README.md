@@ -25,7 +25,10 @@ Create a `.env.local` file in the root directory with the following variables:
 ```
 MONGODB_URI=your_mongodb_connection_string
 HUGGING_FACE_API_KEY=your_hugging_face_api_key
+HUGGING_FACE_API_URL=https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1
 ```
+
+See `.env.local.example` for a template.
 
 ### Installation
 
@@ -54,6 +57,17 @@ npm run dev
 3. **Generate Images**: Enter a prompt and generate an AI image.
 4. **Submit or Delete**: Choose to submit the image as your entry or delete it to try again.
 5. **View Submissions**: Check your submitted and deleted images.
+
+## Deployment
+
+This application can be deployed to Vercel with MongoDB Atlas for database hosting. The entire application (both frontend and backend) can be deployed as a single Next.js application.
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
+
+Key deployment steps:
+1. Set up MongoDB Atlas
+2. Configure Hugging Face API access
+3. Deploy to Vercel with appropriate environment variables
 
 ## Project Structure
 
