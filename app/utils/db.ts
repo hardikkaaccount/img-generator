@@ -22,10 +22,12 @@ declare global {
   var mongoose: MongooseCache | undefined;
 }
 
-let cached = global.mongoose;
+// Initialize cached with a default value if global.mongoose is undefined
+let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+// Set global.mongoose if it doesn't exist
+if (!global.mongoose) {
+  global.mongoose = cached;
 }
 
 async function connectDB() {
