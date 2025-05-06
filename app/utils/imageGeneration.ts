@@ -1,14 +1,12 @@
-import axios from 'axios';
+import { OpenAI } from 'openai';
 import { generateMockImage } from './mockImageGeneration';
 
 // Maximum allowed prompt length
-const MAX_PROMPT_LENGTH = 1200;
-// Base timeout in milliseconds (for shorter prompts)
-const BASE_TIMEOUT = 30000; // 30 seconds
-// Additional time per character for longer prompts
-const TIMEOUT_PER_CHAR = 50; // 50ms per character
+const MAX_PROMPT_LENGTH = 1000;
+// Base timeout in milliseconds
+const TIMEOUT = 60000; // 60 seconds
 
-// Function to generate an image based on a text prompt using Hugging Face API
+// Function to generate an image based on a text prompt using OpenAI's DALL-E
 export async function generateImage(prompt: string): Promise<string> {
   try {
     // Validate and trim prompt length if needed
@@ -18,91 +16,70 @@ export async function generateImage(prompt: string): Promise<string> {
       prompt = prompt.substring(0, MAX_PROMPT_LENGTH);
     }
 
-    // Get API URL and key from environment variables
-    const API_URL = process.env.HUGGING_FACE_API_URL;
-    const API_KEY = process.env.HUGGING_FACE_API_KEY;
+    // Get API key from environment variables
+    const API_KEY = process.env.OPENAI_API_KEY;
 
-    if (!API_KEY || !API_URL) {
-      console.warn('API_KEY or API_URL is not defined, using mock image service');
+    if (!API_KEY) {
+      console.warn('OPENAI_API_KEY is not defined, using mock image service');
       return generateMockImage(prompt);
     }
 
-    // Calculate adaptive timeout based on prompt length
-    // Longer prompts need more time to process
-    const promptLength = prompt.length;
-    const calculatedTimeout = Math.min(
-      BASE_TIMEOUT + (promptLength * TIMEOUT_PER_CHAR),
-      120000 // Cap at 2 minutes maximum
-    );
-    
-    console.log(`Sending request to ${API_URL} with prompt length: ${promptLength} chars (timeout: ${calculatedTimeout}ms)`);
+    console.log(`Sending request to OpenAI with prompt length: ${prompt.length} chars`);
 
-    // For very long prompts, we'll add a note about potential timeouts
-    if (promptLength > 800) {
-      console.log('Note: Very long prompts may take longer to process and could time out');
-    }
-
-    // Send request to the API
-    const response = await axios({
-      url: API_URL,
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      data: {
-        inputs: prompt,
-        options: {
-          wait_for_model: true,
-          use_cache: true // Try to use cached results when possible
-        }
-      },
-      responseType: 'arraybuffer',
-      validateStatus: (status: number) => true, // Don't throw on any status code
-      timeout: calculatedTimeout,
+    // Initialize OpenAI client
+    const openai = new OpenAI({
+      apiKey: API_KEY,
     });
 
-    // Check if we got an error response
-    if (response.status !== 200) {
-      console.error('API Error:', {
-        status: response.status, 
-        statusText: response.statusText,
-        headers: response.headers,
-        data: response.data ? Buffer.from(response.data as any).toString().substring(0, 200) : 'No data',
-        promptLength
-      });
-      
-      // For very long prompts that time out, we might want to retry with a shorter version
-      if (response.status === 503 || (response as any).code === 'ECONNABORTED') {
-        if (promptLength > 400) {
-          console.log('Timeout occurred with long prompt, retrying with shorter version...');
-          const shortenedPrompt = prompt.substring(0, Math.floor(promptLength * 0.7)); // Use 70% of original
-          return generateImage(shortenedPrompt);
-        }
-      }
-      
-      // Fall back to mock image generation
+    // Create a timeout promise
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timed out')), TIMEOUT);
+    });
+
+    // Create the image generation promise
+    const imagePromise = openai.images.generate({
+      model: "dall-e-3",
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+      response_format: "b64_json",
+    });
+
+    // Race the promises to handle timeout
+    const response = await Promise.race([imagePromise, timeoutPromise]) as Awaited<typeof imagePromise>;
+
+    // Check if we got a valid response
+    if (!response.data || response.data.length === 0) {
+      console.error('OpenAI did not return image data');
       return generateMockImage(prompt);
     }
 
-    // Check if we got a valid image response
-    const contentType = response.headers['content-type'];
-    if (!contentType || !contentType.includes('image')) {
-      console.error('API did not return an image:', {
-        contentType,
-        headers: response.headers,
-        dataSize: response.data ? Buffer.from(response.data as any).length : 0
-      });
+    const imageData = response.data[0];
+    
+    if (!imageData.b64_json) {
+      console.error('OpenAI response missing b64_json data');
       return generateMockImage(prompt);
     }
 
-    console.log(`Successfully generated image with content type: ${contentType}`);
+    console.log(`Successfully generated image with OpenAI's DALL-E`);
 
-    // Convert the image buffer to Base64
-    const imageBase64 = Buffer.from(response.data as any).toString('base64');
-    return `data:${contentType};base64,${imageBase64}`;
+    // Return the base64 image data with appropriate MIME type
+    return `data:image/png;base64,${imageData.b64_json}`;
   } catch (error) {
-    console.error('Error generating image:', error);
+    console.error('Error generating image with OpenAI:', error);
+    
+    // For very long prompts that cause issues, we might want to retry with a shorter version
+    if (prompt.length > 400 && error instanceof Error && (
+      error.message.includes('timeout') || 
+      error.message.includes('rate') || 
+      error.message.includes('capacity')
+    )) {
+      console.log('Error occurred with long prompt, retrying with shorter version...');
+      const shortenedPrompt = prompt.substring(0, Math.floor(prompt.length * 0.7)); // Use 70% of original
+      return generateImage(shortenedPrompt);
+    }
+    
     // Fall back to mock image generation
     return generateMockImage(prompt);
   }
