@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/app/utils/db';
 import User from '@/app/models/User';
 import Submission from '@/app/models/Submission';
+import { Document } from 'mongoose';
+
+interface SubmissionDocument extends Document {
+  _id: any; // Using any for the _id to avoid TypeScript errors
+  prompt: string;
+  imageUrl: string;
+  status?: string;
+  timestamp?: Date;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,20 +41,20 @@ export async function GET(req: NextRequest) {
     
     return NextResponse.json({
       message: 'Submissions retrieved successfully',
-      submissions: submissions.map(submission => ({
-        id: submission._id,
+      submissions: submissions.map((submission: SubmissionDocument) => ({
+        id: submission._id.toString(),
         prompt: submission.prompt,
         imageUrl: submission.imageUrl,
-        status: submission.status,
-        timestamp: submission.timestamp
+        status: submission.status || 'Submitted',
+        timestamp: submission.timestamp || new Date()
       })),
-      remainingPrompts: user.remainingPrompts,
-      submittedPromptsCount: user.submittedPromptsCount
+      remainingPrompts: user.remainingPrompts || 0,
+      submittedPromptsCount: user.submittedPromptsCount || 0
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error retrieving submissions:', error);
     return NextResponse.json(
-      { message: 'Failed to retrieve submissions' },
+      { message: 'Failed to retrieve submissions', error: error.message },
       { status: 500 }
     );
   }

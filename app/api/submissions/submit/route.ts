@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/app/utils/db';
 import User from '@/app/models/User';
 import Submission from '@/app/models/Submission';
+import { Document } from 'mongoose';
+
+interface SubmissionDocument extends Document {
+  _id: any; // Using any for the _id to avoid TypeScript errors
+  userId: string;
+  prompt: string;
+  imageUrl: string;
+  status: string;
+  timestamp: Date;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,25 +52,30 @@ export async function POST(req: NextRequest) {
       imageUrl,
       status: 'Submitted',
       timestamp: new Date()
-    });
+    }) as SubmissionDocument;
     
     await submission.save();
     
     // Update user (decrement remaining prompts, increment submitted count)
     user.remainingPrompts -= 1;
     user.submittedPromptsCount += 1;
-    user.submissions.push(submission._id);
+    
+    // Only add to submissions array if it exists
+    if (Array.isArray(user.submissions)) {
+      user.submissions.push(submission._id);
+    }
+    
     await user.save();
     
     return NextResponse.json({
       message: 'Image submitted successfully',
-      submissionId: submission._id,
+      submissionId: submission._id.toString(),
       remainingPrompts: user.remainingPrompts
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error submitting image:', error);
     return NextResponse.json(
-      { message: 'Failed to submit image' },
+      { message: 'Failed to submit image', error: error.message },
       { status: 500 }
     );
   }

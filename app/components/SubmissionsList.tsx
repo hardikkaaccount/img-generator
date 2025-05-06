@@ -19,13 +19,14 @@ interface SubmissionsListProps {
 
 // Define the API response interface
 interface SubmissionsResponse {
+  message?: string;
   submissions: {
     id: string;
     prompt: string;
     imageUrl: string;
-    createdAt: string;
-    status: 'Submitted' | 'Deleted';
-    timestamp: string;
+    createdAt?: string;
+    status?: 'Submitted' | 'Deleted';
+    timestamp?: string;
   }[];
   remainingPrompts: number;
   submittedPromptsCount: number;
@@ -41,18 +42,18 @@ export default function SubmissionsList({ userId, onStatsUpdate }: SubmissionsLi
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await axios.get<SubmissionsResponse>(`/api/user/submissions?userId=${userId}`);
+        const response = await axios.get<SubmissionsResponse>(`/api/submissions/get?userId=${userId}`);
         // Convert API response to match Submission type
         const formattedSubmissions: Submission[] = response.data.submissions.map(sub => ({
           id: sub.id,
           prompt: sub.prompt,
           imageUrl: sub.imageUrl,
-          status: sub.status,
-          timestamp: sub.timestamp || sub.createdAt
+          status: sub.status || 'Submitted',
+          timestamp: sub.timestamp || sub.createdAt || new Date().toISOString()
         }));
         setSubmissions(formattedSubmissions);
-        setRemainingPrompts(response.data.remainingPrompts);
-        setSubmittedCount(response.data.submittedPromptsCount);
+        setRemainingPrompts(response.data.remainingPrompts || 0);
+        setSubmittedCount(response.data.submittedPromptsCount || 0);
       } catch (error: any) {
         console.error('Error fetching submissions:', error);
         setError(error.response?.data?.message || 'Failed to fetch submissions');
