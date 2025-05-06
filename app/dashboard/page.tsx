@@ -7,6 +7,17 @@ import Navbar from '../components/Navbar';
 import PromptForm from '../components/PromptForm';
 import ImageActions from '../components/ImageActions';
 
+// Define the API response interface
+interface UserDataResponse {
+  remainingPrompts: number;
+  submittedPromptsCount: number;
+  submissions?: {
+    id: string;
+    prompt: string;
+    imageUrl: string;
+  }[];
+}
+
 export default function Dashboard() {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -42,7 +53,7 @@ export default function Dashboard() {
     
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/user?userId=${storedUserId}`);
+        const response = await axios.get<UserDataResponse>(`/api/user?userId=${storedUserId}`);
         
         setRemainingPrompts(response.data.remainingPrompts);
         setSubmittedCount(response.data.submittedPromptsCount);

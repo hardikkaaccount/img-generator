@@ -17,6 +17,20 @@ interface SubmissionsListProps {
   onStatsUpdate?: (remainingPrompts: number) => void;
 }
 
+// Define the API response interface
+interface SubmissionsResponse {
+  submissions: {
+    id: string;
+    prompt: string;
+    imageUrl: string;
+    createdAt: string;
+    status: 'Submitted' | 'Deleted';
+    timestamp: string;
+  }[];
+  remainingPrompts: number;
+  submittedPromptsCount: number;
+}
+
 export default function SubmissionsList({ userId, onStatsUpdate }: SubmissionsListProps) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,8 +41,16 @@ export default function SubmissionsList({ userId, onStatsUpdate }: SubmissionsLi
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await axios.get(`/api/submissions/get?userId=${userId}`);
-        setSubmissions(response.data.submissions);
+        const response = await axios.get<SubmissionsResponse>(`/api/user/submissions?userId=${userId}`);
+        // Convert API response to match Submission type
+        const formattedSubmissions: Submission[] = response.data.submissions.map(sub => ({
+          id: sub.id,
+          prompt: sub.prompt,
+          imageUrl: sub.imageUrl,
+          status: sub.status,
+          timestamp: sub.timestamp || sub.createdAt
+        }));
+        setSubmissions(formattedSubmissions);
         setRemainingPrompts(response.data.remainingPrompts);
         setSubmittedCount(response.data.submittedPromptsCount);
       } catch (error: any) {

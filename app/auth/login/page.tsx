@@ -6,6 +6,15 @@ import Link from 'next/link';
 import axios from 'axios';
 import Navbar from '../../components/Navbar';
 
+// Define the response type
+interface LoginResponse {
+  user: {
+    id: string;
+    username: string;
+  };
+  message: string;
+}
+
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +37,7 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await axios.post<LoginResponse>('/api/auth/login', {
         username,
         password
       });

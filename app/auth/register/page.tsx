@@ -6,6 +6,12 @@ import Link from 'next/link';
 import axios from 'axios';
 import Navbar from '../../components/Navbar';
 
+// Define the response type
+interface RegisterResponse {
+  userId: string;
+  message: string;
+}
+
 export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +40,7 @@ export default function Register() {
     setIsLoading(true);
     
     try {
-      const response = await axios.post('/api/auth/register', {
+      const response = await axios.post<RegisterResponse>('/api/auth/register', {
         username,
         password
       });

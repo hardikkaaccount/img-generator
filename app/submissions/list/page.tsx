@@ -8,6 +8,17 @@ import Navbar from '@/app/components/Navbar';
 import { FaSort, FaSortUp, FaSortDown, FaSpinner, FaUser, FaTrophy } from 'react-icons/fa';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
+// Define the API response interface
+interface ScoreboardResponse {
+  users: {
+    id: string;
+    username: string;
+    submittedPromptsCount: number;
+    updatedAt: string;
+    avatar?: string;
+  }[];
+}
+
 interface User {
   id: string;
   username: string;
@@ -38,7 +49,7 @@ export default function SubmissionsList() {
     setError(null);
     try {
       console.log('Fetching submissions from /api/scoreboard...');
-      const response = await axios.get('/api/scoreboard');
+      const response = await axios.get<ScoreboardResponse>('/api/scoreboard');
       
       console.log('API response received:', response.status);
       console.log('Response data:', JSON.stringify(response.data));
@@ -52,14 +63,13 @@ export default function SubmissionsList() {
       }
     } catch (err) {
       console.error('Error fetching submissions:', err);
-      // More detailed error logging
-      if (axios.isAxiosError(err)) {
-        console.error('Axios error details:', {
-          status: err.response?.status,
-          statusText: err.response?.statusText,
-          data: err.response?.data,
-        });
-      }
+      // Simplified error logging
+      const error = err as any;
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+      });
       setError('Failed to fetch submissions. Please try again.');
     } finally {
       setLoading(false);

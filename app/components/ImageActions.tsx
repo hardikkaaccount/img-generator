@@ -13,6 +13,17 @@ interface ImageActionsProps {
   onImageDeleted?: () => void;
 }
 
+// Define the API response interfaces
+interface SubmitImageResponse {
+  message: string;
+  remainingPrompts: number;
+}
+
+interface DeleteImageResponse {
+  message: string;
+  remainingPrompts: number;
+}
+
 export default function ImageActions({
   userId,
   prompt,
@@ -51,7 +62,7 @@ export default function ImageActions({
     try {
       console.log(`Submitting image with prompt: "${prompt}"`);
       
-      const response = await axios.post('/api/submissions/submit', {
+      const response = await axios.post<SubmitImageResponse>('/api/submissions/submit', {
         userId,
         prompt,
         imageUrl
@@ -89,7 +100,7 @@ export default function ImageActions({
     try {
       console.log(`Deleting image with prompt: "${prompt}"`);
       
-      const response = await axios.post('/api/submissions/delete', {
+      const response = await axios.post<DeleteImageResponse>('/api/submissions/delete', {
         userId,
         prompt,
         imageUrl

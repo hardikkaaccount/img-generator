@@ -6,6 +6,17 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import SubmissionsList from '../components/SubmissionsList';
 
+// Define the API response interface
+interface UserDataResponse {
+  remainingPrompts: number;
+  submittedPromptsCount: number;
+  submissions?: {
+    id: string;
+    prompt: string;
+    imageUrl: string;
+  }[];
+}
+
 export default function Submissions() {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -29,7 +40,7 @@ export default function Submissions() {
     // Fetch the latest user data from the API
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/user?userId=${storedUserId}`);
+        const response = await axios.get<UserDataResponse>(`/api/user?userId=${storedUserId}`);
         setRemainingPrompts(response.data.remainingPrompts);
         console.log('Initial user data fetched:', response.data);
       } catch (error) {

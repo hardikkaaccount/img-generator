@@ -7,6 +7,12 @@ import axios from 'axios';
 // Maximum allowed prompt length
 const MAX_PROMPT_LENGTH = 1200;
 
+// Define the API response interfaces
+interface GenerateImageResponse {
+  imageUrl: string;
+  remainingPrompts?: number;
+}
+
 interface PromptFormProps {
   userId?: string;
   onSuccess?: (imageUrl: string, prompt: string) => void;
@@ -57,7 +63,7 @@ export default function PromptForm({
       const endpoint = userId ? '/api/generate-image' : '/api/generate';
       console.log(`Submitting prompt to ${endpoint}: "${prompt}"`);
       
-      const response = await axios.post(endpoint, { 
+      const response = await axios.post<GenerateImageResponse>(endpoint, { 
         prompt,
         userId 
       });

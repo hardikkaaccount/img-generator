@@ -15,6 +15,18 @@ interface SubmissionRanking {
   rank: number;
 }
 
+// Define the API response interface
+interface LeaderboardResponse {
+  rankings: {
+    id: string;
+    username: string;
+    imageUrl: string;
+    prompt: string;
+    votes: number;
+    rank: number;
+  }[];
+}
+
 export default function Leaderboard() {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -34,11 +46,11 @@ export default function Leaderboard() {
     
     const fetchLeaderboard = async () => {
       try {
-        const response = await axios.get('/api/leaderboard');
+        const response = await axios.get<LeaderboardResponse>('/api/leaderboard');
         setRankings(response.data.rankings);
       } catch (err) {
         console.error('Error fetching leaderboard:', err);
-        setError('Failed to load the leaderboard. Please try again later.');
+        setError('Failed to load leaderboard');
       } finally {
         setIsLoading(false);
       }

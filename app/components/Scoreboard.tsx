@@ -10,6 +10,17 @@ interface User {
   updatedAt: string;
 }
 
+// Define the API response interface
+interface ScoreboardResponse {
+  users: {
+    id: string;
+    username: string;
+    submittedPromptsCount: number;
+    updatedAt: string;
+    avatar?: string;
+  }[];
+}
+
 export default function Scoreboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +29,7 @@ export default function Scoreboard() {
   useEffect(() => {
     const fetchScoreboard = async () => {
       try {
-        const response = await axios.get('/api/scoreboard');
+        const response = await axios.get<ScoreboardResponse>('/api/scoreboard');
         setUsers(response.data.users);
         setIsLoading(false);
       } catch (error: any) {
