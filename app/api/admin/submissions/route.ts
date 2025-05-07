@@ -119,11 +119,11 @@ export async function GET(req: NextRequest) {
     
     // Get user details
     console.log('Fetching user details...');
-    let users: Array<{_id: any, username?: string}> = [];
+    let users: Array<{_id: any, username?: string, remainingPrompts?: number, usedPrompts?: number}> = [];
     try {
       if (userIds.length > 0) {
         users = await User.find({ _id: { $in: userIds } })
-          .select('_id username')
+          .select('_id username remainingPrompts usedPrompts')
           .lean();
       }
       console.log(`Found ${users.length} users`);
@@ -132,22 +132,27 @@ export async function GET(req: NextRequest) {
       // Continue with partial data
     }
     
-    // Create a map of userId -> username for quick lookup
+    // Create a map of userId -> user data for quick lookup
     console.log('Creating user map...');
-    const userMap: Record<string, string> = {};
+    const userMap: Record<string, {username: string, remainingPrompts?: number, usedPrompts?: number}> = {};
     users.forEach(user => {
       if (user && user._id) {
         const userId = String(user._id);
-        userMap[userId] = user.username || 'Unknown';
+        userMap[userId] = {
+          username: user.username || 'Unknown',
+          remainingPrompts: user.remainingPrompts,
+          usedPrompts: user.usedPrompts
+        };
       }
     });
     
     // Enhance submissions with username
-    console.log('Enhancing submissions with usernames...');
+    console.log('Enhancing submissions with user data...');
     const enhancedSubmissions = validSubmissions.map(sub => {
       try {
         const subId = sub._id ? String(sub._id) : 'unknown-id';
         const userId = sub.userId ? String(sub.userId) : 'unknown-user';
+        const userData = userMap[userId] || { username: 'Unknown User' };
         
         return {
           id: subId,
@@ -156,7 +161,9 @@ export async function GET(req: NextRequest) {
           status: sub.status || 'Submitted',
           timestamp: sub.timestamp || sub.createdAt || new Date(),
           userId: userId,
-          username: userMap[userId] || 'Unknown User'
+          username: userData.username,
+          remainingPrompts: userData.remainingPrompts,
+          usedPrompts: userData.usedPrompts
         };
       } catch (mapError) {
         console.error('Error mapping submission:', mapError, sub);
