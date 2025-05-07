@@ -39,13 +39,22 @@ export async function GET(req: NextRequest) {
     // Get all indexes for the submission collection
     const indexes = await Submission.collection.indexes();
     
+    // Get collection stats using command instead of stats()
+    let collectionStats = { error: 'Database connection not available' };
+    if (mongoose.connection.db) {
+      try {
+        collectionStats = await mongoose.connection.db.command({ collStats: 'submissions' });
+      } catch (statsError) {
+        console.error('Error getting collection stats:', statsError);
+        collectionStats = { error: 'Failed to get collection stats' };
+      }
+    }
+    
     return NextResponse.json({
       message: 'Index operation completed',
       result,
       allIndexes: indexes,
-      collectionStats: mongoose.connection.db 
-        ? await mongoose.connection.db.collection('submissions').stats()
-        : { error: 'Database connection not available' }
+      collectionStats
     });
   } catch (error: any) {
     console.error('Index creation error:', error);
