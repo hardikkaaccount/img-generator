@@ -48,9 +48,10 @@ export async function POST(req: NextRequest) {
     
     await submission.save();
     
-    // Instead of decrementing prompts, we give one back since this is a deletion
-    if (user.remainingPrompts < 5) { // Assuming 5 is the max
-      user.remainingPrompts += 1;
+    // Decrease remaining prompts when a user deletes an image
+    // This is because they're still using a prompt even if they delete the image
+    if (user.remainingPrompts > 0) {
+      user.remainingPrompts -= 1;
     }
     
     // Only add to submissions array if it exists
