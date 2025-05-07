@@ -27,29 +27,52 @@ export default function Login() {
     
     // Reset error
     setError('');
+    console.log('Login attempt for:', username);
     
     // Validate form
     if (!username || !password) {
       setError('Username and password are required');
+      console.log('Login form validation failed: Missing fields');
       return;
     }
     
     setIsLoading(true);
     
     try {
+      console.log('Sending login request to API...');
       const response = await axios.post<LoginResponse>('/api/auth/login', {
         username,
         password
       });
       
-      // Store user data in localStorage
-      localStorage.setItem('userId', response.data.user.id);
-      localStorage.setItem('username', response.data.user.username);
+      console.log('Login successful, response:', response.data);
+      
+      try {
+        // Store user data in localStorage
+        if (typeof window !== 'undefined') {
+          console.log('Setting localStorage values...');
+          console.log('User ID:', response.data.user.id);
+          console.log('Username:', response.data.user.username);
+          localStorage.setItem('userId', response.data.user.id);
+          localStorage.setItem('username', response.data.user.username);
+          console.log('User data stored in localStorage');
+        } else {
+          console.warn('Window object not available for localStorage');
+        }
+      } catch (storageError) {
+        console.error('Error storing data in localStorage:', storageError);
+        // Continue anyway, as this might be a browser security setting
+      }
       
       // Redirect to dashboard
-      router.push('/dashboard');
+      console.log('Redirecting to dashboard...');
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 500); // Short delay to ensure localStorage is set before redirect
     } catch (error: any) {
       console.error('Login error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       setError(error.response?.data?.message || 'Login failed');
     } finally {
       setIsLoading(false);

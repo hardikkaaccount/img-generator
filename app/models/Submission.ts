@@ -6,9 +6,11 @@ export interface ISubmission extends Document {
   imageUrl: string;
   status: 'Submitted' | 'Deleted';
   timestamp: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const SubmissionSchema: Schema = new Schema({
+const SubmissionSchema = new Schema({
   userId: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
@@ -31,9 +33,14 @@ const SubmissionSchema: Schema = new Schema({
     type: Date, 
     default: Date.now 
   }
+}, {
+  timestamps: true
 });
 
-// Check if model exists before creating it (for Next.js hot reloading)
+// Add index for createdAt to improve sorting performance
+SubmissionSchema.index({ createdAt: -1 });
+
+// Check if model exists and create only if it doesn't (for Hot Reloading)
 const Submission = mongoose.models.Submission || mongoose.model<ISubmission>('Submission', SubmissionSchema);
 
 export default Submission; 

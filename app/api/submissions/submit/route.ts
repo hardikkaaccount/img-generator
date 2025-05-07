@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     
     // Only add to submissions array if it exists
     if (Array.isArray(user.submissions)) {
-      user.submissions.push(submission._id);
+    user.submissions.push(submission._id);
     }
     
     await user.save();
