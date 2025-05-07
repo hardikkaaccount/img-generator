@@ -6,6 +6,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import PromptForm from '../components/PromptForm';
 import ImageActions from '../components/ImageActions';
+import TabTracker from '../components/TabTracker';
 
 // Define the API response interface
 interface UserDataResponse {
@@ -125,6 +126,8 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-background">
       <Navbar username={username} remainingPrompts={remainingPrompts} />
+      
+      {userId && <TabTracker userId={userId} />}
       
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <header className="mb-8">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import TabTracker from '../components/TabTracker';
 import SubmissionsList from '../components/SubmissionsList';
 
 // Define the API response interface
@@ -72,7 +73,9 @@ export default function Submissions() {
 
   return (
     <main>
-      <Navbar username={username} remainingPrompts={remainingPrompts} />
+      <Navbar username={username || undefined} remainingPrompts={remainingPrompts ?? undefined} />
+      
+      {userId && <TabTracker userId={userId} />}
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">

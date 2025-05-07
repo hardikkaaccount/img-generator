@@ -119,11 +119,11 @@ export async function GET(req: NextRequest) {
     
     // Get user details
     console.log('Fetching user details...');
-    let users: Array<{_id: any, username?: string, remainingPrompts?: number, usedPrompts?: number}> = [];
+    let users: Array<{_id: any, username?: string, remainingPrompts?: number, usedPrompts?: number, tabSwitches?: number}> = [];
     try {
       if (userIds.length > 0) {
         users = await User.find({ _id: { $in: userIds } })
-          .select('_id username remainingPrompts usedPrompts')
+          .select('_id username remainingPrompts usedPrompts tabSwitches')
           .lean();
       }
       console.log(`Found ${users.length} users`);
@@ -134,14 +134,15 @@ export async function GET(req: NextRequest) {
     
     // Create a map of userId -> user data for quick lookup
     console.log('Creating user map...');
-    const userMap: Record<string, {username: string, remainingPrompts?: number, usedPrompts?: number}> = {};
+    const userMap: Record<string, {username: string, remainingPrompts?: number, usedPrompts?: number, tabSwitches?: number}> = {};
     users.forEach(user => {
       if (user && user._id) {
         const userId = String(user._id);
         userMap[userId] = {
           username: user.username || 'Unknown',
           remainingPrompts: user.remainingPrompts,
-          usedPrompts: user.usedPrompts
+          usedPrompts: user.usedPrompts,
+          tabSwitches: user.tabSwitches || 0
         };
       }
     });
@@ -163,7 +164,8 @@ export async function GET(req: NextRequest) {
           userId: userId,
           username: userData.username,
           remainingPrompts: userData.remainingPrompts,
-          usedPrompts: userData.usedPrompts
+          usedPrompts: userData.usedPrompts,
+          tabSwitches: userData.tabSwitches
         };
       } catch (mapError) {
         console.error('Error mapping submission:', mapError, sub);

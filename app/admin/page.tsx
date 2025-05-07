@@ -23,6 +23,9 @@ interface Submission {
   timestamp: string;
   userId: string;
   username?: string;
+  remainingPrompts?: number;
+  usedPrompts?: number;
+  tabSwitches?: number;
 }
 
 interface Pagination {
@@ -286,6 +289,9 @@ export default function Admin() {
                             </span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                               Used: {submission.usedPrompts ?? "N/A"}
+                            </span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                              Tabs: {submission.tabSwitches ?? "0"}
                             </span>
                           </div>
                         </div>

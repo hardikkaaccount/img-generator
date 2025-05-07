@@ -7,6 +7,7 @@ export interface IUser extends Document {
   remainingPrompts: number;
   submittedPromptsCount: number;
   submissions: mongoose.Types.ObjectId[];
+  tabSwitches: number;
 }
 
 const UserSchema: Schema = new Schema({
@@ -30,7 +31,11 @@ const UserSchema: Schema = new Schema({
   submissions: [{ 
     type: Schema.Types.ObjectId, 
     ref: 'Submission' 
-  }]
+  }],
+  tabSwitches: {
+    type: Number,
+    default: 0
+  }
 }, {
   timestamps: true
 });
