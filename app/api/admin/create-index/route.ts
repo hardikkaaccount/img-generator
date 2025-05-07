@@ -5,6 +5,16 @@ import mongoose from 'mongoose';
 
 const ADMIN_SECRET = 'admin-hardik-secret-key'; 
 
+// Define a type for our stats responses
+type CollectionStats = {
+  error?: string;
+  count?: number;
+  size?: number;
+  avgObjSize?: number;
+  storageSize?: number;
+  [key: string]: any;
+};
+
 export async function GET(req: NextRequest) {
   console.log('Create Index API called');
   
@@ -40,10 +50,11 @@ export async function GET(req: NextRequest) {
     const indexes = await Submission.collection.indexes();
     
     // Get collection stats using command instead of stats()
-    let collectionStats = { error: 'Database connection not available' };
+    let collectionStats: CollectionStats = { error: 'Database connection not available' };
     if (mongoose.connection.db) {
       try {
-        collectionStats = await mongoose.connection.db.command({ collStats: 'submissions' });
+        const statsResult = await mongoose.connection.db.command({ collStats: 'submissions' });
+        collectionStats = statsResult as CollectionStats;
       } catch (statsError) {
         console.error('Error getting collection stats:', statsError);
         collectionStats = { error: 'Failed to get collection stats' };
