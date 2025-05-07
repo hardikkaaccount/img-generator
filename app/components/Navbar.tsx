@@ -76,19 +76,7 @@ export default function Navbar({ username, remainingPrompts }: NavbarProps) {
           
           {/* Desktop menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/submissions/list" className="text-text-secondary hover:text-primary transition-colors duration-200 text-sm flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              <span>Submissions</span>
-            </Link>
-            
-            <Link href="/scoreboard" className="text-text-secondary hover:text-primary transition-colors duration-200 text-sm flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span>Leaderboard</span>
-            </Link>
+            {/* Removed Submissions and Leaderboard links from desktop menu */}
             
             {username ? (
               <>
@@ -163,27 +151,7 @@ export default function Navbar({ username, remainingPrompts }: NavbarProps) {
           isOpen ? 'max-h-screen opacity-100 py-4' : 'max-h-0 opacity-0 overflow-hidden'
         }`}>
           <div className="flex flex-col space-y-4 pt-4 border-t border-gray-200 mt-4">
-            <Link 
-              href="/submissions/list" 
-              className="py-2 text-text-secondary hover:text-primary flex items-center gap-2"
-              onClick={() => setIsOpen(false)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              Submissions
-            </Link>
-            
-            <Link 
-              href="/scoreboard" 
-              className="py-2 text-text-secondary hover:text-primary flex items-center gap-2"
-              onClick={() => setIsOpen(false)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Leaderboard
-            </Link>
+            {/* Removed Submissions and Leaderboard links from mobile menu */}
             
             {username ? (
               <>
