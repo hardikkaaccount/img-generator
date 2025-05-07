@@ -43,7 +43,9 @@ export async function GET(req: NextRequest) {
       message: 'Index operation completed',
       result,
       allIndexes: indexes,
-      collectionStats: await mongoose.connection.db.collection('submissions').stats()
+      collectionStats: mongoose.connection.db 
+        ? await mongoose.connection.db.collection('submissions').stats()
+        : { error: 'Database connection not available' }
     });
   } catch (error: any) {
     console.error('Index creation error:', error);
